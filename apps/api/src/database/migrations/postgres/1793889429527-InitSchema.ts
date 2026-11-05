@@ -1,0 +1,126 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class InitSchema1793889429527 implements MigrationInterface {
+    name = 'InitSchema1793889429527'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TABLE "affectation_histo" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "type" character varying(30) NOT NULL, "cibleId" uuid NOT NULL, "ancienneValeur" text, "nouvelleValeur" text, "dateEffet" TIMESTAMP WITH TIME ZONE NOT NULL, "auteurId" uuid, CONSTRAINT "PK_08bad5363b24236656998400dca" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_4dfa771f5e0f1ba9237c0a69a6" ON "affectation_histo" ("syncSeq") `);
+        await queryRunner.query(`CREATE INDEX "IDX_ce92ec93d65ff2e9cc82b4a910" ON "affectation_histo" ("cibleId") `);
+        await queryRunner.query(`CREATE TABLE "client" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "code" integer NOT NULL, "codeX3" character varying(30), "statut" character varying(20) NOT NULL DEFAULT 'CREE_NON_VALIDE', "categorie" character varying(30), "raisonSociale" character varying(200) NOT NULL, "dateInstallation" date, "identifiantFiscal" character varying(30), "registreCommerce" character varying(30), "patente" character varying(30), "ice" character varying(30), "numeroAutorisation" character varying(30), "dateAutorisation" date, "operateurCreation" character varying(100), "codeClientRemplacant" uuid, "adresse" character varying(300), "ville" character varying(80), "latitude" numeric(10,7), "longitude" numeric(10,7), "telephone1" character varying(30), "telephone2" character varying(30), "fax" character varying(30), "assistants" text, "vendeurs" text, "pharmacienNom" character varying(150), "pharmacienSexe" character varying(1), "pharmacienDateNaissance" date, "pharmacienCin" character varying(20), "gsm1" character varying(30), "gsm2" character varying(30), "email1" character varying(150), "email2" character varying(150), "neSouhaitePasPartagerGsm" boolean NOT NULL DEFAULT false, "neSouhaitePasPartagerEmail" boolean NOT NULL DEFAULT false, "sousSecteurId" uuid, "secteurChemin" character varying(900), "uniteGeoIms" character varying(50), "rpId" uuid, "modaliteReglement" character varying(30), "ciblage" character varying(1), "leaderOpinion" character varying(50), "orateur" boolean NOT NULL DEFAULT false, "emplacement" character varying(20), "solvabilite" character varying(20), "caGlobalEstime" character varying(30), "politiqueCommerciale" character varying(30), "logicielPharmacie" character varying(50), "moq" numeric(18,4), "bloque" boolean NOT NULL DEFAULT false, "contentieux" character varying(20), "plafondEncours" numeric(18,4), "encoursCommercial" numeric(18,4), "createurId" uuid, CONSTRAINT "PK_96da49381769303a6515a8785c7" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_711334c9b573287159f1eb2f85" ON "client" ("syncSeq") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_3331ba630bece961ed0e0ab1dc" ON "client" ("code") `);
+        await queryRunner.query(`CREATE INDEX "IDX_7e0b14a1d9d940d3c28fd09102" ON "client" ("codeX3") `);
+        await queryRunner.query(`CREATE INDEX "IDX_34c28a5c95e85c8f7c4f3597b2" ON "client" ("raisonSociale") `);
+        await queryRunner.query(`CREATE INDEX "IDX_4acd5e1a622446d83d7ce2e77b" ON "client" ("sousSecteurId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_a1ad29b070fc1c9e1c0c423527" ON "client" ("secteurChemin") `);
+        await queryRunner.query(`CREATE INDEX "IDX_ec3265663bcd0646f297340da5" ON "client" ("rpId") `);
+        await queryRunner.query(`CREATE TABLE "commande" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "numero" character varying(30) NOT NULL, "numeroProvisoire" character varying(30), "numeroX3" character varying(30), "clientId" uuid NOT NULL, "rpId" uuid NOT NULL, "rpAffecteId" uuid, "sousSecteurId" uuid, "visiteId" uuid, "origine" character varying(20) NOT NULL DEFAULT 'MOBILE', "dateCommande" date NOT NULL, "dateLivraisonSouhaitee" date, "statut" character varying(30) NOT NULL DEFAULT 'BROUILLON', "modeReglement" character varying(30), "priorite" character varying(30), "transporteur" character varying(100), "instanceJours" integer, "commentaire" text, "saisie" text NOT NULL, "anomalies" text, "valide" boolean NOT NULL DEFAULT false, "totalBrutHT" numeric(18,4) NOT NULL DEFAULT '0', "totalRemiseHT" numeric(18,4) NOT NULL DEFAULT '0', "totalNetHT" numeric(18,4) NOT NULL DEFAULT '0', "totalTVA" numeric(18,4) NOT NULL DEFAULT '0', "totalNetTTC" numeric(18,4) NOT NULL DEFAULT '0', "totalQuantite" numeric(18,3) NOT NULL DEFAULT '0', "totalUG" numeric(18,3) NOT NULL DEFAULT '0', "motifDerogation" character varying(30), "derogationValideeParId" uuid, "dateConfirmationRp" TIMESTAMP WITH TIME ZONE, "traiteParId" uuid, "dateValidation" TIMESTAMP WITH TIME ZONE, "historiqueStatuts" text, CONSTRAINT "PK_6eb4573cd6722e4b0aa8d414775" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_144ed945dcace887846ed91a15" ON "commande" ("syncSeq") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_fbe389570adf85535e6c511de4" ON "commande" ("numero") `);
+        await queryRunner.query(`CREATE INDEX "IDX_05743bd4380661370076bb86fb" ON "commande" ("clientId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_56e61db35285c4efd08cd5fffe" ON "commande" ("rpId") `);
+        await queryRunner.query(`CREATE TABLE "commande_ligne" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "commandeId" uuid NOT NULL, "packId" uuid NOT NULL, "produitId" uuid NOT NULL, "qte" numeric(18,3) NOT NULL DEFAULT '0', "gratuit" boolean NOT NULL DEFAULT false, "prixUnitaireHT" numeric(18,4) NOT NULL DEFAULT '0', "tauxTva" numeric(18,4) NOT NULL DEFAULT '0', "tauxRemise" numeric(18,4) NOT NULL DEFAULT '0', "montantBrutHT" numeric(18,4) NOT NULL DEFAULT '0', "montantRemiseHT" numeric(18,4) NOT NULL DEFAULT '0', "montantNetHT" numeric(18,4) NOT NULL DEFAULT '0', "montantNetTTC" numeric(18,4) NOT NULL DEFAULT '0', CONSTRAINT "PK_c9efc0f15c8b4c2f8597f2f2c0a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_5fee9f726006a1739dc5ab5948" ON "commande_ligne" ("syncSeq") `);
+        await queryRunner.query(`CREATE INDEX "IDX_b057fca2b3932ecbee15563875" ON "commande_ligne" ("commandeId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_d8c251629d0d621a2490736597" ON "commande_ligne" ("produitId") `);
+        await queryRunner.query(`CREATE TABLE "demande_modification" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "type" character varying(20) NOT NULL, "clientId" uuid NOT NULL, "changements" text NOT NULL, "statut" character varying(20) NOT NULL DEFAULT 'EN_ATTENTE', "demandeurId" uuid NOT NULL, "prevalidateurId" uuid, "datePrevalidation" TIMESTAMP WITH TIME ZONE, "validateurId" uuid, "dateValidation" TIMESTAMP WITH TIME ZONE, "motifRejet" text, "clientReaffectationId" uuid, CONSTRAINT "PK_126a2cad261c18e37c35dbbe997" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_91adf229cc5f34abe07892ade4" ON "demande_modification" ("syncSeq") `);
+        await queryRunner.query(`CREATE INDEX "IDX_e3cad456ad88342ae2d1ad94ce" ON "demande_modification" ("clientId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_766e0d9ec3d92ac821af043c73" ON "demande_modification" ("demandeurId") `);
+        await queryRunner.query(`CREATE TABLE "pack" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "numero" character varying(30) NOT NULL, "designation" character varying(200) NOT NULL, "typeCondition" character varying(20) NOT NULL, "categoriePack" character varying(50), "dateDebut" date NOT NULL, "dateFin" date NOT NULL, "actif" boolean NOT NULL DEFAULT true, "baseSeuil" character varying(20) NOT NULL DEFAULT 'VALEUR_HT', "unitaire" boolean NOT NULL DEFAULT false, "nombreMinCores" integer, "priorite" integer, "dateDebutCalcul" date, "dateFinCalcul" date, "maxApplicationsParClient" integer, "produits" text NOT NULL, "groupes" text NOT NULL, "packsSeuil" text NOT NULL, "conditions" text NOT NULL, "produitsUG" text NOT NULL, "eligibilite" text, "clientsExclus" text, CONSTRAINT "PK_c125718b999b41a621b0d799e02" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_9cd1c76eb39cda7a641612a0c6" ON "pack" ("syncSeq") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_a4dab36185ca1f9443734a72bb" ON "pack" ("numero") `);
+        await queryRunner.query(`CREATE TABLE "cycle" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "rpId" uuid NOT NULL, "libelle" character varying(150) NOT NULL, "actif" boolean NOT NULL DEFAULT false, "dateDesactivation" date, "semaines" text NOT NULL, CONSTRAINT "PK_af5984cb5853f1f88109c9ea2b7" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_654a80fad8a38ca7ae62514abc" ON "cycle" ("syncSeq") `);
+        await queryRunner.query(`CREATE INDEX "IDX_fbea4c429c374e99488f4668b1" ON "cycle" ("rpId") `);
+        await queryRunner.query(`CREATE TABLE "planification" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "rpId" uuid NOT NULL, "cycleId" uuid NOT NULL, "semaineDebut" character varying(7) NOT NULL, "nombreSemaines" integer NOT NULL, "premiereSemaineCycle" integer NOT NULL DEFAULT '1', "statut" character varying(20) NOT NULL DEFAULT 'BROUILLON', "modifieeApresValidation" boolean NOT NULL DEFAULT false, "semaines" text NOT NULL, "validateurId" uuid, CONSTRAINT "PK_467f0320ffbad53394676c6e0ae" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_cd43dafea78f359b19ce620f89" ON "planification" ("syncSeq") `);
+        await queryRunner.query(`CREATE INDEX "IDX_1fa202159b0bfb43fc9dc79c78" ON "planification" ("rpId") `);
+        await queryRunner.query(`CREATE TABLE "gamme" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "code" character varying(30) NOT NULL, "libelle" character varying(150) NOT NULL, CONSTRAINT "PK_e7467eac5c1af14b65bcdf94794" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_0fe0be572b6b67b1097ef9e3bc" ON "gamme" ("syncSeq") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_07e509b6b4c667063cac7e8c4d" ON "gamme" ("code") `);
+        await queryRunner.query(`CREATE TABLE "produit" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "code" character varying(30) NOT NULL, "designation" character varying(200) NOT NULL, "gammeId" uuid, "origine" character varying(30), "categorie" character varying(20), "tauxTva" numeric(18,4) NOT NULL DEFAULT '0', "pfHT" numeric(18,4) NOT NULL DEFAULT '0', "pphHT" numeric(18,4) NOT NULL DEFAULT '0', "pphTTC" numeric(18,4) NOT NULL DEFAULT '0', "ppvTTC" numeric(18,4) NOT NULL DEFAULT '0', "phoHT" numeric(18,4) NOT NULL DEFAULT '0', "vendable" boolean NOT NULL DEFAULT true, "echantillon" boolean NOT NULL DEFAULT false, "colisage" integer NOT NULL DEFAULT '1', "priorite" integer NOT NULL DEFAULT '0', "stockDisponible" numeric(18,4), "datePeremptionMin" character varying(10), CONSTRAINT "PK_279f55d8788586d6d2b5bc83c4d" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_8f94bc83e2c75a353d26b73855" ON "produit" ("syncSeq") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_0b1d71c902b7cbee6b08deebec" ON "produit" ("code") `);
+        await queryRunner.query(`CREATE TABLE "secteur" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "niveau" character varying(20) NOT NULL, "code" character varying(30) NOT NULL, "designation" character varying(150) NOT NULL, "parentId" uuid, "chemin" character varying(900) NOT NULL, CONSTRAINT "PK_1d6f08a2edc3cda8aec4674e915" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_f40ab32391456f8538cdc4dcf9" ON "secteur" ("syncSeq") `);
+        await queryRunner.query(`CREATE INDEX "IDX_f5822d742627b7f0e99fd93cfd" ON "secteur" ("chemin") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_5a6c29f8177c6cde7de051ab9c" ON "secteur" ("niveau", "code") `);
+        await queryRunner.query(`CREATE TABLE "sync_counter" ("name" character varying(50) NOT NULL, "value" bigint NOT NULL DEFAULT '0', CONSTRAINT "PK_89e8fbe518a63ff309b07b63697" PRIMARY KEY ("name"))`);
+        await queryRunner.query(`CREATE TABLE "sync_operation" ("opId" uuid NOT NULL, "userId" uuid NOT NULL, "deviceId" character varying(100), "tableName" character varying(40) NOT NULL, "entityId" uuid NOT NULL, "statut" character varying(20) NOT NULL, "resultat" text, "recuLe" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_ddf83e3980317351e29789864f9" PRIMARY KEY ("opId"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_26fa5810a80359bf0a6267ff2a" ON "sync_operation" ("userId") `);
+        await queryRunner.query(`CREATE TABLE "audit_log" ("id" uuid NOT NULL, "entite" character varying(40) NOT NULL, "entiteId" uuid NOT NULL, "action" character varying(20) NOT NULL, "changements" text, "auteurId" uuid, "source" character varying(100), "date" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_07fefa57f7f5ab8fc3f52b3ed0b" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_130d97ebc5c66d8fe1a0754517" ON "audit_log" ("entite") `);
+        await queryRunner.query(`CREATE INDEX "IDX_34c9a36fd9771ea88b2fc1a3fc" ON "audit_log" ("entiteId") `);
+        await queryRunner.query(`CREATE TABLE "utilisateur" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "codeRp" character varying(20) NOT NULL, "matricule" character varying(30), "login" character varying(80) NOT NULL, "passwordHash" character varying(100) NOT NULL, "nom" character varying(80) NOT NULL, "prenom" character varying(80) NOT NULL, "sexe" character varying(1), "dateNaissance" date, "role" character varying(30) NOT NULL DEFAULT 'RP', "statut" character varying(20) NOT NULL DEFAULT 'ACTIF', "estResponsable" boolean NOT NULL DEFAULT false, "travailleSurTerrain" boolean NOT NULL DEFAULT true, "responsableId" uuid, "modeAccesClients" character varying(20) NOT NULL DEFAULT 'SECTEUR', "secteursIds" text, "categorie" character varying(30), "codeX3" character varying(30), "gsmProfessionnel" character varying(30), "email" character varying(150), "villeResidence" character varying(80), "dhKmVilleAVille" numeric(18,4) NOT NULL DEFAULT '0', "dhKmUrbainResidence" numeric(18,4) NOT NULL DEFAULT '0', "dhKmUrbainAutres" numeric(18,4) NOT NULL DEFAULT '0', "anneesConsultation" integer NOT NULL DEFAULT '2', "dateEmbauche" date, "derniereConnexion" TIMESTAMP WITH TIME ZONE, "echecsConnexion" integer NOT NULL DEFAULT '0', CONSTRAINT "PK_838f0f99fe900e49ef050030443" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_8d8ee98dd75eb1730e40c117cb" ON "utilisateur" ("syncSeq") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_eab5d4490012a47fd948bc3c68" ON "utilisateur" ("codeRp") `);
+        await queryRunner.query(`CREATE UNIQUE INDEX "IDX_8aabfb85f405be6b712a966a1e" ON "utilisateur" ("login") `);
+        await queryRunner.query(`CREATE TABLE "visite" ("id" uuid NOT NULL, "version" integer NOT NULL DEFAULT '1', "syncSeq" bigint NOT NULL DEFAULT '0', "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "createdBy" uuid, "updatedBy" uuid, "deletedAt" TIMESTAMP WITH TIME ZONE, "clientId" uuid NOT NULL, "rpId" uuid NOT NULL, "planificationId" uuid, "semaine" character varying(7), "datePrevue" date, "statut" character varying(20) NOT NULL DEFAULT 'PLANIFIEE', "obligatoire" boolean NOT NULL DEFAULT false, "horsPlan" boolean NOT NULL DEFAULT false, "typeVisite" character varying(20) NOT NULL DEFAULT 'STANDARD', "motifHorsPlan" character varying(50), "debut" TIMESTAMP WITH TIME ZONE, "fin" TIMESTAMP WITH TIME ZONE, "latitudeDebut" numeric(10,7), "longitudeDebut" numeric(10,7), "distanceClientM" integer, "horsZone" boolean NOT NULL DEFAULT false, "activites" text, "commentaire" text, CONSTRAINT "PK_d3c47ceb01d746fddf25eb1b836" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_e68419f42acd754c2b4293146b" ON "visite" ("syncSeq") `);
+        await queryRunner.query(`CREATE INDEX "IDX_da300b4a636a8e91d2f8e9d64e" ON "visite" ("clientId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_30c99de9d9e9d8a81ccfabfe2f" ON "visite" ("rpId", "datePrevue") `);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`DROP INDEX "public"."IDX_30c99de9d9e9d8a81ccfabfe2f"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_da300b4a636a8e91d2f8e9d64e"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_e68419f42acd754c2b4293146b"`);
+        await queryRunner.query(`DROP TABLE "visite"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_8aabfb85f405be6b712a966a1e"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_eab5d4490012a47fd948bc3c68"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_8d8ee98dd75eb1730e40c117cb"`);
+        await queryRunner.query(`DROP TABLE "utilisateur"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_34c9a36fd9771ea88b2fc1a3fc"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_130d97ebc5c66d8fe1a0754517"`);
+        await queryRunner.query(`DROP TABLE "audit_log"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_26fa5810a80359bf0a6267ff2a"`);
+        await queryRunner.query(`DROP TABLE "sync_operation"`);
+        await queryRunner.query(`DROP TABLE "sync_counter"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_5a6c29f8177c6cde7de051ab9c"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_f5822d742627b7f0e99fd93cfd"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_f40ab32391456f8538cdc4dcf9"`);
+        await queryRunner.query(`DROP TABLE "secteur"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_0b1d71c902b7cbee6b08deebec"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_8f94bc83e2c75a353d26b73855"`);
+        await queryRunner.query(`DROP TABLE "produit"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_07e509b6b4c667063cac7e8c4d"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_0fe0be572b6b67b1097ef9e3bc"`);
+        await queryRunner.query(`DROP TABLE "gamme"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_1fa202159b0bfb43fc9dc79c78"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_cd43dafea78f359b19ce620f89"`);
+        await queryRunner.query(`DROP TABLE "planification"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_fbea4c429c374e99488f4668b1"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_654a80fad8a38ca7ae62514abc"`);
+        await queryRunner.query(`DROP TABLE "cycle"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_a4dab36185ca1f9443734a72bb"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_9cd1c76eb39cda7a641612a0c6"`);
+        await queryRunner.query(`DROP TABLE "pack"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_766e0d9ec3d92ac821af043c73"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_e3cad456ad88342ae2d1ad94ce"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_91adf229cc5f34abe07892ade4"`);
+        await queryRunner.query(`DROP TABLE "demande_modification"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_d8c251629d0d621a2490736597"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_b057fca2b3932ecbee15563875"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_5fee9f726006a1739dc5ab5948"`);
+        await queryRunner.query(`DROP TABLE "commande_ligne"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_56e61db35285c4efd08cd5fffe"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_05743bd4380661370076bb86fb"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_fbe389570adf85535e6c511de4"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_144ed945dcace887846ed91a15"`);
+        await queryRunner.query(`DROP TABLE "commande"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_ec3265663bcd0646f297340da5"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_a1ad29b070fc1c9e1c0c423527"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_4acd5e1a622446d83d7ce2e77b"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_34c28a5c95e85c8f7c4f3597b2"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_7e0b14a1d9d940d3c28fd09102"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_3331ba630bece961ed0e0ab1dc"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_711334c9b573287159f1eb2f85"`);
+        await queryRunner.query(`DROP TABLE "client"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_ce92ec93d65ff2e9cc82b4a910"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_4dfa771f5e0f1ba9237c0a69a6"`);
+        await queryRunner.query(`DROP TABLE "affectation_histo"`);
+    }
+
+}
