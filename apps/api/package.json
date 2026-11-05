@@ -44,14 +44,25 @@
     "ts-jest": "29.2.5",
     "ts-node": "10.9.2",
     "tsconfig-paths": "4.2.0",
-    "typescript": "5.6.3"
+    "typescript": "5.6.3",
+    "@medforce/sync-client": "workspace:*"
   },
   "jest": {
     "testEnvironment": "node",
     "rootDir": ".",
     "testRegex": "test/.*\\.e2e-spec\\.ts$",
-    "transform": { "^.+\\.ts$": ["ts-jest", { "tsconfig": "tsconfig.json" }] },
-    "moduleNameMapper": { "^@medforce/core$": "<rootDir>/../../packages/core/src/index.ts" },
+    "transform": {
+      "^.+\\.ts$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.json"
+        }
+      ]
+    },
+    "moduleNameMapper": {
+      "^@medforce/core$": "<rootDir>/../../packages/core/src/index.ts",
+      "^@medforce/sync-client$": "<rootDir>/../../packages/sync-client/src/index.ts"
+    },
     "testTimeout": 30000
   }
 }

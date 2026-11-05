@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.28.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @medforce/core --filter @medforce/sync-client build
+      - run: pnpm --filter @medforce/core test
+      - run: pnpm --filter @medforce/sync-client test
+      - run: pnpm --filter @medforce/api typecheck
+      - run: pnpm --filter @medforce/backoffice build
+
+  e2e-postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: medforce, POSTGRES_PASSWORD: medforce, POSTGRES_DB: medforce_vrp_test }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U medforce" --health-interval 5s --health-retries 10
+    env:
+      DB_TYPE: postgres
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_USER: medforce
+      DB_PASSWORD: medforce
+      DB_NAME_TEST: medforce_vrp_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.28.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @medforce/core --filter @medforce/sync-client build
+      - run: pnpm --filter @medforce/api test
+
+  e2e-sqlserver:
+    runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env: { ACCEPT_EULA: "Y", MSSQL_SA_PASSWORD: "Medforce_2026!", MSSQL_PID: Developer }
+        ports: ["1433:1433"]
+    env:
+      DB_TYPE: mssql
+      DB_HOST: localhost
+      DB_PORT: 1433
+      DB_USER: sa
+      DB_PASSWORD: "Medforce_2026!"
+      DB_NAME_TEST: medforce_vrp_test
+      TEST_SCHEMA: migrations
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.28.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @medforce/core --filter @medforce/sync-client build
+      - name: Création de la base SQL Server
+        working-directory: apps/api
+        run: |
+          for i in $(seq 1 30); do
+            node -e "const s=require('mssql');s.connect({server:'localhost',user:'sa',password:process.env.DB_PASSWORD,options:{encrypt:false,trustServerCertificate:true}}).then(p=>p.request().query(\"IF DB_ID('medforce_vrp_test') IS NULL CREATE DATABASE medforce_vrp_test\")).then(()=>process.exit(0)).catch(()=>process.exit(1))" && break
+            sleep 3
+          done
+      - run: pnpm --filter @medforce/api test

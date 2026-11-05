@@ -19,7 +19,7 @@ export class ScopeService {
   ) {}
 
   isNational(user: AuthUser): boolean {
-    return ['ADMIN', 'DPP', 'TELEPHONISTE', 'VALIDATEUR_COMMANDES'].includes(user.role);
+    return ['ADMIN', 'DPP', 'COORDINATEUR', 'TELEPHONISTE', 'VALIDATEUR_COMMANDES'].includes(user.role);
   }
 
   /** Ids de l'utilisateur et de ses subordonnés (récursif). */
